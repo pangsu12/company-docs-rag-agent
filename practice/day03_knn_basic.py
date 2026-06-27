@@ -14,8 +14,7 @@ train_data = [
     {"features":[182, 90],"label":"heavy"}
 ]
 
-new_data = [174,70]
-
+new_data = [171, 66]
 distances =[]
 
 for data in train_data:
@@ -27,6 +26,8 @@ for data in train_data:
     })
 
 print(distances)
+for item in distances:
+    print(item)
 
 distances.sort(key = lambda x: x["distance"])
 
@@ -34,7 +35,7 @@ print("가까운 순서 : ")
 for item in distances:
     print(item)
 
-k = 3
+k = 5
 
 nearest_neighbors = distances[:k]
 print("가장 가까운 이웃 3개 : ")
