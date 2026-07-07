@@ -1,6 +1,6 @@
 from pathlib import Path
 from search import search_documents
-
+from generator import generate_answer
 
 DOCS_DIR = Path("sample_docs")
 
@@ -70,7 +70,9 @@ def main():
             print("chunk 번호:", document["chunk_id"])
             print("내용:", document["content"])
             print("유사도 점수:", score)
-
-
+        answer = generate_answer(query, results)
+        print("-" *40)
+        print("생성된 답변")
+        print(answer)
 if __name__ == "__main__":
     main()
