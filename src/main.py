@@ -1,7 +1,7 @@
 from pathlib import Path
 from search import search_documents
 from generator import generate_answer, is_greeting, generate_greeting_answer
-
+from logger import save_query_history
 
 #문서가 있을 위치 정하기  DOCS_DIR = Path("sample_docs")
 DOCS_DIR = Path("sample_docs")
@@ -58,6 +58,9 @@ def main():
     query = input("질문을 입력하세요: ")
 
     if is_greeting(query):
+        answer = generate_greeting_answer()
+
+        save_query_history(query, [], answer)
         print("-" * 40)
         print("생성된 답변")
         print(generate_greeting_answer())
@@ -84,6 +87,8 @@ def main():
             print("내용:", document["content"])
             print("유사도 점수:", score)
         answer = generate_answer(query, results)
+
+        save_query_history(query, results, answer)
         print("-" *40)
         print("생성된 답변")
         print(answer)
