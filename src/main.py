@@ -63,7 +63,7 @@ def main():
         print(generate_greeting_answer())
         return
     #가장 관련있는 3개 찾기
-    results = search_documents(query, chunks, top_k=3, min_score=0.05)
+    results = search_documents(query, chunks, top_k=3, min_score=0.1)
 
     print("-" * 40)
     print("사용자 질문:", query)

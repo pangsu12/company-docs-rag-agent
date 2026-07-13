@@ -4,7 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-def search_documents(query, documents, top_k=3, min_score = 0.05):
+def search_documents(query, documents, top_k=3, min_score = 0.1):
     #text에 doc내용만 저장
     texts = [doc["content"] for doc in documents]
 
