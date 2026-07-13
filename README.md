@@ -2,15 +2,15 @@
 
 회사 문서를 기반으로 사용자의 질문에 관련된 문서 조각을 검색하고, 출처와 함께 답변을 생성하는 RAG 기반 AI Agent 프로젝트입니다.
 
-현재 버전은 TF-IDF 기반 Retrieval, 검색 결과 기반 답변 생성, OpenAI API 연결 구조, fallback 답변 처리, 질문 기록 저장, 그리고 간단한 Agent 기능을 포함합니다.
+현재 버전은 TF-IDF 기반 Retrieval, 검색 결과 기반 답변 생성, OpenAI API 연결 구조, fallback 답변 처리, 질문 기록 저장, 그리고 rule-based Agent 기능을 포함합니다.
 
 ---
 
 ## 프로젝트 목표
 
-이 프로젝트의 최종 목표는 회사 문서나 서비스 데이터를 기반으로 사용자의 질문에 답하고, 문서 요약, 회의록 액션 아이템 추출, 이메일 초안 작성 같은 업무 기능까지 수행하는 LLM/RAG 기반 AI Agent 서비스를 구현하는 것입니다.
+이 프로젝트의 최종 목표는 회사 문서나 서비스 데이터를 기반으로 사용자의 질문에 답하고, 문서 요약, 회의록 액션 아이템 추출, 고객 문의 이메일 초안 작성 같은 업무 기능까지 수행하는 LLM/RAG 기반 AI Agent 서비스를 구현하는 것입니다.
 
-현재는 RAG 구조의 핵심 흐름을 직접 구현하는 데 집중하고 있습니다.
+현재는 RAG 구조의 핵심 흐름을 직접 구현하는 데 집중하고 있으며, 향후 embedding 기반 semantic search, Vector DB, FastAPI 서버, LLM 기반 intent classification, tool/function calling 기반 Agent 기능으로 확장하는 것을 목표로 합니다.
 
 ---
 
@@ -189,6 +189,7 @@ logs/query_history.jsonl
 ```txt
 문서 요약
 회의록 기반 액션 아이템 추출
+고객 문의 이메일 초안 작성
 ```
 
 질문 의도 분류는 키워드 기반으로 수행합니다.
@@ -199,6 +200,9 @@ logs/query_history.jsonl
 
 "할 일", "해야 할 일", "액션 아이템", "체크리스트"
 → action_items
+
+"이메일", "메일", "답장", "초안", "작성해줘"
+→ email_draft
 
 그 외
 → 일반 Q&A
@@ -252,6 +256,42 @@ service_manual.txt 문서 핵심 요약:
 
 출처:
 - meeting_note.txt, chunk 3
+```
+
+---
+
+### 고객 문의 이메일 초안 작성
+
+입력:
+
+```txt
+이메일 초안을 작성해줘
+```
+
+출력 예시:
+
+```txt
+질문 : 이메일 초안을 작성해줘
+
+고객 문의 답변 이메일 초안:
+
+제목: 문의주신 내용에 대한 안내드립니다
+
+안녕하세요.
+
+문의해주셔서 감사합니다.
+문의하신 내용과 관련하여 아래와 같이 안내드립니다.
+
+고객 문의에 대한 답변 이메일 초안을 작성해야 한다.
+고객이 서비스 사용 방법을 문의하면, 담당자는 정중하게 사용 방법을 안내한다.
+이메일에는 문의 내용에 대한 답변, 추가 안내, 감사 인사를 포함한다.
+
+추가로 궁금하신 사항이 있으시면 언제든지 문의 부탁드립니다.
+
+감사합니다.
+
+출처:
+- email_sample.txt, chunk 2
 ```
 
 ---
@@ -356,6 +396,7 @@ answer
 ```txt
 문서 요약
 회의록 액션 아이템 추출
+고객 문의 이메일 초안 작성
 ```
 
 ---
@@ -421,6 +462,10 @@ python src/main.py
 ```
 
 ```txt
+이메일 초안을 작성해줘
+```
+
+```txt
 피자 추천해줘
 ```
 
@@ -435,6 +480,7 @@ v0.3: 인사말 처리 + 낮은 유사도 필터링
 v0.4: OpenAI API 연결 구조 + fallback 처리
 v0.5: 질문 기록 저장
 v0.6: Rule-based Agent 기능 추가
+v0.7: 이메일 초안 작성 Agent 기능 추가
 ```
 
 ---
@@ -469,7 +515,7 @@ Agent 기능은 rule-based 방식임
 6. React Native 또는 Web UI 연결
 7. Supabase 기반 사용자별 질문 기록 저장
 8. LLM 기반 intent classification 적용
-9. 이메일 초안 작성 Agent 기능 추가
+9. tool/function calling 기반 Agent 구조로 확장
 10. FAQ 자동 생성 Agent 기능 추가
 ```
 
@@ -479,6 +525,6 @@ Agent 기능은 rule-based 방식임
 
 이 프로젝트는 회사 문서를 기반으로 사용자 질문에 관련된 문서 chunk를 검색하고, 출처와 함께 답변을 생성하는 RAG 기반 AI Agent 프로젝트입니다.
 
-현재는 TF-IDF와 cosine similarity를 사용해 Retrieval 단계를 직접 구현했으며, OpenAI API 연결 구조와 fallback 답변 생성을 추가했습니다. 또한 사용자 질문 기록을 JSONL 형식으로 저장하고, 문서 요약과 회의록 액션 아이템 추출을 수행하는 rule-based Agent 기능을 구현했습니다.
+현재는 TF-IDF와 cosine similarity를 사용해 Retrieval 단계를 직접 구현했으며, OpenAI API 연결 구조와 fallback 답변 생성을 추가했습니다. 또한 사용자 질문 기록을 JSONL 형식으로 저장하고, 사용자 질문 의도를 분류하여 일반 Q&A, 문서 요약, 회의록 액션 아이템 추출, 고객 문의 이메일 초안 작성 기능을 수행하는 rule-based Agent 기능을 구현했습니다.
 
-향후 embedding 기반 semantic search, Vector DB, FastAPI 서버, LLM 기반 Agent 기능으로 확장할 계획입니다.
+향후 embedding 기반 semantic search, Vector DB, FastAPI 서버, LLM 기반 intent classification, tool/function calling 기반 Agent 기능으로 확장할 계획입니다.
