@@ -3,7 +3,14 @@
 회사 문서 기반 LLM/RAG AI Agent 프로젝트입니다.
 
 사용자가 회사 문서에 대해 질문하면, 시스템이 관련 문서 조각을 검색하고 출처와 함께 결과를 제공합니다.
-현재 버전은 LLM 답변 생성 전 단계로, **TF-IDF 기반 문서 검색 기능**을 구현했습니다.
+
+현재 버전은 LLM 답변 생성 전 단계로, **TF-IDF 기반 top-k 문서 검색 기능**을 구현했습니다.
+
+Current version:
+
+```txt
+Retrieval module v0.1 using TF-IDF top-k document search.
+```
 
 ---
 
@@ -27,6 +34,7 @@
 ## Motivation
 
 일반 LLM은 회사 내부 문서나 최신 업무 문서를 알지 못합니다.
+
 따라서 회사 문서를 검색한 뒤, 검색된 문서를 근거로 답변하는 RAG 구조가 필요합니다.
 
 이 프로젝트는 실제 기업 업무에서 사용할 수 있는 AI 기능을 직접 설계하고 구현하는 것을 목표로 합니다.
@@ -107,6 +115,31 @@ company-docs-rag-agent/
 
 ---
 
+## How to Run
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the project:
+
+```bash
+python src/main.py
+```
+
+Example questions:
+
+```txt
+연차 정책이 어떻게 돼?
+고객 문의에는 어떻게 답변해?
+이메일 초안은 어떻게 작성해?
+광수는 무슨 일을 맡았어?
+```
+
+---
+
 ## How It Works
 
 현재 시스템은 다음 흐름으로 동작합니다.
@@ -123,7 +156,7 @@ company-docs-rag-agent/
 
 ---
 
-## Example
+## Example 1: Email Response Search
 
 ### User Question
 
@@ -147,7 +180,7 @@ chunk 번호: 2
 
 ---
 
-## Another Example
+## Example 2: Company Policy Search
 
 ### User Question
 
