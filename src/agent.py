@@ -19,9 +19,21 @@ def detect_agent_intent(query):
         "핵심",
     ]
 
+    email_keywords = [
+    "이메일",
+    "메일",
+    "답장",
+    "답변 메일",
+    "초안",
+    "작성해줘",
+    ]
+
     for keyword in action_keywords:
         if keyword in normalized_query:
             return "action_items"
+    for keyword in email_keywords:
+        if keyword in normalized_query:
+            return "email_draft"
 
     for keyword in summary_keywords:
         if keyword in normalized_query:
@@ -110,6 +122,35 @@ def generate_action_items_answer(query, search_results):
 
     return "\n".join(answer_lines)
 
+def generate_email_draft_answer(query, search_results):
+    if not search_results:
+        return "관련 문서를 찾지 못했습니다."
+
+    top_result = search_results[0]
+    document = top_result["document"]
+
+    answer_lines = []
+    answer_lines.append(f"질문 : {query}")
+    answer_lines.append("")
+    answer_lines.append("고객 문의 답변 이메일 초안:")
+    answer_lines.append("")
+    answer_lines.append("제목: 문의주신 내용에 대한 안내드립니다")
+    answer_lines.append("")
+    answer_lines.append("안녕하세요.")
+    answer_lines.append("")
+    answer_lines.append("문의해주셔서 감사합니다.")
+    answer_lines.append("문의하신 내용과 관련하여 아래와 같이 안내드립니다.")
+    answer_lines.append("")
+    answer_lines.append(document["content"])
+    answer_lines.append("")
+    answer_lines.append("추가로 궁금하신 사항이 있으시면 언제든지 문의 부탁드립니다.")
+    answer_lines.append("")
+    answer_lines.append("감사합니다.")
+    answer_lines.append("")
+    answer_lines.append("출처:")
+    answer_lines.append(f'- {document["source"]}, chunk {document["chunk_id"]}')
+
+    return "\n".join(answer_lines)
 
 def generate_summary_answer(query, search_results, all_chunks):
     if not search_results:
@@ -167,7 +208,10 @@ def run_agent_action(query, search_results, all_chunks):
 
     if intent == "action_items":
         return generate_action_items_answer(query, search_results)
-
+    
+    if intent == "email_draft":
+        return generate_email_draft_answer(query, search_results)
+    
     if intent == "summary":
         return generate_summary_answer(query, search_results, all_chunks)
 
