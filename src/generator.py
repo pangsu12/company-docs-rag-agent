@@ -1,10 +1,14 @@
+import os
+
 from dotenv import load_dotenv
 from openai import OpenAI, RateLimitError, APIError
 
 
 load_dotenv()
 
-client = OpenAI()
+api_key = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI() if api_key else None
 
 
 def is_greeting(query):
@@ -82,6 +86,10 @@ def generate_answer(query, search_results):
 사용자 질문:
 {query}
 """
+
+    if client is None:
+        print("OpenAI API 키가 없어 fallback 답변을 사용합니다.")
+        return generate_fallback_answer(query, search_results)
 
     try:
         response = client.responses.create(
