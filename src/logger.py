@@ -14,7 +14,9 @@ def save_query_history(query, search_results, answer):
         "timestamp": datetime.now().isoformat(timespec="seconds"),
         "query": query,
         "search_results": [],
+        "search_result_count" : len(search_results),
         "answer": answer,
+        
     }
 
     for item in search_results:
@@ -22,6 +24,7 @@ def save_query_history(query, search_results, answer):
         score = item["score"]
 
         history_item["search_results"].append({
+            "rank":item["rank"],
             "source": document["source"],
             "chunk_id": document["chunk_id"],
             "content": document["content"],

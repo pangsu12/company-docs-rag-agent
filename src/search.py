@@ -24,11 +24,12 @@ def search_documents(query, documents, top_k=3, min_score = 0.1):
 
     results = []
 #여기까지----------------------------
-    for index in ranked_indices[:top_k]:
+    for rank, index in enumerate(ranked_indices[:top_k],start=1):
         score = similarities[index]
 
         if score > min_score:
             results.append({
+                "rank" : rank,
                 "document": documents[index],
                 "score": score
             })

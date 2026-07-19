@@ -51,9 +51,12 @@ def generate_fallback_answer(query, search_results):
 
     top_result = search_results[0]
     document = top_result["document"]
+    search_file_count = len(search_results)
 
     answer = f"""
 질문 : {query}
+
+총 {search_file_count}개의 문서를 찾았습니다.
 
 관련 문서에 따르면:
 {document["content"]}

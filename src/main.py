@@ -62,12 +62,12 @@ def print_search_results(query, results):
 
     print("관련 문서 검색 결과")
 
-    for rank, item in enumerate(results, start=1):
+    for item in results:
         document = item["document"]
         score = item["score"]
 
         print("-" * 40)
-        print(f"{rank}위")
+        print(item["rank"],"위")
         print("문서:", document["source"])
         print("chunk 번호:", document["chunk_id"])
         print("내용:", document["content"])
@@ -84,6 +84,11 @@ def main():
     print("문서 로드 완료")
     print(f"총 문서 수: {len(documents)}개")
     print(f"총 chunk 수: {len(chunks)}개")
+    if documents:
+        print("불러온 문서 목록")
+        for index, document in enumerate(documents, start=1):
+             print(f"{index} 번째 문서 : {document['source']}")
+            
 
     print("-" * 40)
 
