@@ -31,13 +31,14 @@ def detect_agent_intent(query):
     for keyword in action_keywords:
         if keyword in normalized_query:
             return "action_items"
+    for keyword in summary_keywords:
+        if keyword in normalized_query:
+            return "summary"
     for keyword in email_keywords:
         if keyword in normalized_query:
             return "email_draft"
 
-    for keyword in summary_keywords:
-        if keyword in normalized_query:
-            return "summary"
+   
 
     return "qa"
 
