@@ -25,7 +25,6 @@ def detect_agent_intent(query):
     "답장",
     "답변 메일",
     "초안",
-    "작성해줘",
     ]
 
     for keyword in action_keywords:
@@ -70,9 +69,13 @@ def extract_action_items_from_text(text):
             action_items.append(clean_line.lstrip("-").strip())
             continue
 
-        if clean_line[0:2].replace(".", "").isdigit():
-            action_items.append(clean_line)
-            continue
+        if (
+            len(clean_line) >= 2
+            and clean_line[0].isdigit()
+            and clean_line[1] == "."
+        ):
+            action_items.append(clean_line[2:].strip())
+            continue       
 
         for keyword in action_like_keywords:
             if keyword in clean_line:
@@ -82,21 +85,24 @@ def extract_action_items_from_text(text):
     return action_items
 
 
-def generate_action_items_answer(query, search_results):
+def generate_action_items_answer(query, search_results, all_chunks):
     if not search_results:
         return "관련 문서를 찾지 못했습니다."
+
+    top_source = search_results[0]["document"]["source"]
 
     all_action_items = []
     sources = []
 
-    for item in search_results:
-        document = item["document"]
-        content = document["content"]
+    for chunk in all_chunks:
+        if chunk["source"] != top_source:
+            continue
 
+        content = chunk["content"]
         action_items = extract_action_items_from_text(content)
 
         if action_items:
-            source_text = f'{document["source"]}, chunk {document["chunk_id"]}'
+            source_text = f'{chunk["source"]}, chunk {chunk["chunk_id"]}'
 
             if source_text not in sources:
                 sources.append(source_text)
@@ -118,6 +124,7 @@ def generate_action_items_answer(query, search_results):
 
     answer_lines.append("")
     answer_lines.append("출처:")
+
     for source in sources:
         answer_lines.append(f"- {source}")
 
@@ -208,7 +215,11 @@ def run_agent_action(query, search_results, all_chunks):
     intent = detect_agent_intent(query)
 
     if intent == "action_items":
-        return generate_action_items_answer(query, search_results)
+        return generate_action_items_answer(
+        query,
+        search_results,
+        all_chunks,
+    )
     
     if intent == "email_draft":
         return generate_email_draft_answer(query, search_results)
