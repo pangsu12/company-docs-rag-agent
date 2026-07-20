@@ -83,7 +83,8 @@ def extract_action_items_from_text(text):
                 break
 
     return action_items
-
+def format_source(document):
+    return f'{document["source"]}, chunk {document["chunk_id"]}'
 
 def generate_action_items_answer(query, search_results, all_chunks):
     if not search_results:
@@ -102,7 +103,7 @@ def generate_action_items_answer(query, search_results, all_chunks):
         action_items = extract_action_items_from_text(content)
 
         if action_items:
-            source_text = f'{chunk["source"]}, chunk {chunk["chunk_id"]}'
+            source_text = format_source(chunk)
 
             if source_text not in sources:
                 sources.append(source_text)
@@ -156,7 +157,7 @@ def generate_email_draft_answer(query, search_results):
     answer_lines.append("감사합니다.")
     answer_lines.append("")
     answer_lines.append("출처:")
-    answer_lines.append(f'- {document["source"]}, chunk {document["chunk_id"]}')
+    answer_lines.append(f'- {format_source(document)}')
 
     return "\n".join(answer_lines)
 
@@ -189,7 +190,7 @@ def generate_summary_answer(query, search_results, all_chunks):
             continue
 
         summary_contents.append(" ".join(lines[:3]))
-        sources.append(f'{chunk["source"]}, chunk {chunk["chunk_id"]}')
+        sources.append(f'{format_source(chunk)}')
 
     if not summary_contents:
         return "요약할 수 있는 문서 내용을 찾지 못했습니다."
